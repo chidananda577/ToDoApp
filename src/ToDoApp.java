@@ -1,18 +1,37 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+
+class Task {
+    String name;
+    String deadline;
+    int priority;
+
+    Task(String name, String deadline, int priority) {
+        this.name = name;
+        this.deadline = deadline;
+        this.priority = priority;
+    }  
+    @Override
+    public String toString() {
+        return "Task: " + name + " | Deadline: " + deadline + " | Priority: " + priority;
+    }
+}
 
 public class ToDoApp {
 
-    private static ArrayList<String> tasks = new ArrayList<>();
+    private static List<Task> tasks = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
     
     public static void main(String[] args) {
         while(true){
-        System.out.println("==TODO LIST==");
+        System.out.println("\n==TODO LIST==");
         System.out.println("1. Add Task");
         System.out.println("2. View Tasks");
         System.out.println("3. Remove Task");
-        System.out.println("4. Exit");
+        System.out.println("4. Sort by Priority");
+        System.out.println("5. Exit");
         System.out.print("Choose an option: ");
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume newline left-over
@@ -20,7 +39,8 @@ public class ToDoApp {
             case  1 -> addTask();
             case  2 -> viewTasks();
             case  3 -> removeTask();
-            case 4 -> {
+            case 4 -> sortTaskByPriority();
+            case 5 -> {
                 System.out.println("Exiting...");
                 return;
             }
@@ -30,10 +50,15 @@ public class ToDoApp {
     }
 
     private static void addTask() {
-        System.out.println("Enter the task to add:");
-        String task = scanner.nextLine();
-        tasks.add(task);
-        System.out.println("Task added: " + task);
+        System.out.println("Enter the task name:");
+        String name = scanner.nextLine();
+        System.out.println("Enter the dealine for the task (YYYY-MM-DD):");
+        String deadline = scanner.nextLine();
+        System.out.println("Enter the priority for the task (1-High, 2-Medium , 3-Low ):");
+        int priority = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left-over
+        tasks.add(new Task(name,deadline,priority));
+        System.out.println("Task added successfully.");
     }
 
     private static void viewTasks() {
@@ -49,13 +74,25 @@ public class ToDoApp {
 
     private static void removeTask() {
         viewTasks();
-        System.out.println("Enter the task number to remove:");
-        int taskNumber = scanner.nextInt();
-        if(taskNumber < 1 || taskNumber > tasks.size()){
-            System.out.println("Invalid task number.");
+        if(!tasks.isEmpty()){
+            System.out.println("Enter the task number to remove:");
+            int taskNumber = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left-over
+            if(taskNumber > 0 && taskNumber <= tasks.size()){
+                tasks.remove(taskNumber - 1);
+                System.out.println("Task removed successfully.");
+            }else{
+                System.out.println("Invalid task number.");
+            }
+        }
+    }
+
+    private static void sortTaskByPriority(){
+        if(tasks.isEmpty()){
+            System.out.println("No task found.");
         }else{
-            String removedTask = tasks.remove(taskNumber - 1);
-            System.out.println("Removed task: " + removedTask);
+            tasks.sort(Comparator.comparingInt(task->task.priority));
+            System.out.println("Tasks sorted by priority:");
         }
     }
 }
